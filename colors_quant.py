@@ -22,11 +22,11 @@ from array import array
 
 gettext.install("gimp20-python", gimp.locale_directory, unicode=True)
 
-def palette_change(img, layer, red, green, blue):
+def colors_quant(img, layer, red, green, blue):
     gimp.progress_init("Processing" + layer.name + "...")
     pdb.gimp_undo_push_group_start(img)
 
-    layername = "render " + layer.name
+    layername = "quant " + layer.name
 
     # Create the new layer:
     srcWidth, srcHeight = layer.width, layer.height
@@ -77,24 +77,24 @@ def palette_change(img, layer, red, green, blue):
 
 
 register(
-    "python-fu-palette_change",
+    "python-fu-colors_quant",
     N_("reduce colors to simulate a different palettes.\n2bit = 4 colors\n3bit = 8 colors\n4bit = 16 colors\n5bit = 32 colors\n8bit = 256 colors"),
     "Adds a new layer to the image",
     "William Bell",
     "William Bell",
     "2015",
-    N_("_Palette..."),
+    N_("_Quant..."),
     "RGB*",
     [
         (PF_IMAGE, "image",       "Input image", None),
         (PF_DRAWABLE, "drawable", "Input drawable", None),
-        (PF_SPINNER, "red",    _("Red"),    8, (2, 256, 1)),
-        (PF_SPINNER, "blue",   _("Green"),  8, (2, 256, 1)),
-        (PF_SPINNER, "green",  _("Blue"),   8, (2, 256, 1)),
+        (PF_SPINNER, "red",    _("Red"),    64, (2, 256, 1)),
+        (PF_SPINNER, "blue",   _("Green"),  64, (2, 256, 1)),
+        (PF_SPINNER, "green",  _("Blue"),   64, (2, 256, 1)),
     ],
     [],
-    palette_change,
-    menu="<Image>/Filters/Render",
+    colors_quant,
+    menu="<Image>/Colors/Map",
     domain=("gimp20-python", gimp.locale_directory)
     )
 
