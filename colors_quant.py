@@ -25,6 +25,7 @@ gettext.install("gimp20-python", gimp.locale_directory, unicode=True)
 def colors_quant(img, layer, red, green, blue):
     gimp.progress_init("Processing" + layer.name + "...")
     pdb.gimp_undo_push_group_start(img)
+    pdb.gimp_layer_add_alpha(layer)
 
     layername = "quant " + layer.name
 
@@ -70,7 +71,7 @@ def colors_quant(img, layer, red, green, blue):
 
     # Remove the old layer
     #img.remove_layer(layer)
-    layer.visible = False
+    #layer.visible = False
 
     pdb.gimp_selection_none(img)
     pdb.gimp_image_undo_group_end(img)
@@ -88,9 +89,9 @@ register(
     [
         (PF_IMAGE, "image",       "Input image", None),
         (PF_DRAWABLE, "drawable", "Input drawable", None),
-        (PF_SPINNER, "red",    _("Red"),    64, (2, 256, 1)),
-        (PF_SPINNER, "blue",   _("Green"),  64, (2, 256, 1)),
-        (PF_SPINNER, "green",  _("Blue"),   64, (2, 256, 1)),
+        (PF_SPINNER, "red",    _("Red"),    8, (2, 256, 1)),
+        (PF_SPINNER, "blue",   _("Green"),  8, (2, 256, 1)),
+        (PF_SPINNER, "green",  _("Blue"),   8, (2, 256, 1)),
     ],
     [],
     colors_quant,
