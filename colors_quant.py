@@ -38,16 +38,26 @@ def colors_quant(img, layer, red, green, blue):
     xoff, yoff = layer.offsets
 
     destDrawable.translate(xoff, yoff)
+    if pdb.gimp_selection_is_empty(img) :
+        X0 = 0
+        Y0 = 0
+    else :
+        X0 = pdb.gimp_selection_bounds(img)[1]
+        Y0 = pdb.gimp_selection_bounds(img)[2]
+        XE = pdb.gimp_selection_bounds(img)[3]
+        YE = pdb.gimp_selection_bounds(img)[4]
+        srcWidth = XE - X0
+        srcHeight = YE - Y0
 
-    srcRgn = layer.get_pixel_rgn(0, 0, srcWidth, srcHeight, False, False)
-    src_pixels = array("B", srcRgn[0:srcWidth, 0:srcHeight])
+    srcRgn = layer.get_pixel_rgn(X0, Y0, srcWidth, srcHeight, False, False)
+    src_pixels = array("B", srcRgn[X0:X0+srcWidth, Y0:Y0+srcHeight])
 
-    dstRgn = destDrawable.get_pixel_rgn(0, 0, srcWidth, srcHeight, True, True)
-    p_size = len(srcRgn[0,0])
+    dstRgn = destDrawable.get_pixel_rgn(X0, Y0, srcWidth, srcHeight, True, True)
+    p_size = len(srcRgn[X0, Y0])
     dest_pixels = array("B", [0] * (srcWidth * srcHeight * p_size))
 
     # Finally, loop over the region:
-    for x in xrange(0, srcWidth - 1) :
+    for x in xrange(0, srcWidth) :
         for y in xrange(0, srcHeight) :
             src_pos = (x + srcWidth * y) * p_size
             dest_pos = src_pos
@@ -63,7 +73,7 @@ def colors_quant(img, layer, red, green, blue):
             gimp.progress_update(progress)
 
     # Copy the whole array back to the pixel region:
-    dstRgn[0:srcWidth, 0:srcHeight] = dest_pixels.tostring()
+    dstRgn[X0:X0+srcWidth, Y0:Y0+srcHeight] = dest_pixels.tostring()
 
     destDrawable.flush()
     destDrawable.merge_shadow(True)
